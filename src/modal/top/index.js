@@ -5,7 +5,7 @@ import SearchAndFilter from "./filter"
 const Header = props => {
   return (
     <header className="modalHeader">
-      <SearchAndFilter />
+      <SearchAndFilter useFilters={props.useFilters} onFilterChange={props.onFilterChange} />
       <Close destroy={props.destroy} />
     </header>
   )

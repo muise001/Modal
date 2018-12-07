@@ -1,7 +1,9 @@
 import { h } from "preact";
 import "./style.less"
+import LoadMore from "./loadMore"
 
-const Videos = ({ videos }) => {
+
+const Videos = ({ videos, onFilterChange }) => {
   const cards = videos.map(video => {
     video = video.attributes;
     return(
@@ -16,7 +18,14 @@ const Videos = ({ videos }) => {
     );
   });
 
-  return <div className="gridWrapper">{cards}</div>
+  return (
+    <div className="contentWrapper">
+      <div className="gridWrapper">
+        {cards}
+      </div>
+      <LoadMore onFilterChange={onFilterChange} videos={videos} />
+    </div>
+  )
 };
 
 export default Videos

@@ -2,15 +2,16 @@ import { h } from "preact";
 import Header from "./top"
 import Content from "./content"
 import Footer from "./bottom"
+import FlipbaseLoader from "./FlipbaseLoader"
 import "./style.less"
 
 const Modal = props => {
-  return ((props.videos) ?
+  return (props.videos ?
     <div className="modal">
-      <Header destroy={props.destroy}/>
-      <Content videos={props.videos} />
+      <Header useFilters={props.useFilters} onFilterChange={props.onFilterChange} destroy={props.destroy}/>
+      <Content onFilterChange={props.onFilterChange} videos={props.videos} />
       <Footer />
-    </div> : <h1 className="modal">Loading</h1>)
+    </div> : <div className="modal"><FlipbaseLoader /></div>)
 }
 
 export default Modal

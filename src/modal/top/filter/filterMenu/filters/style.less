@@ -1,0 +1,58 @@
+.custom_select{
+  cursor: pointer;
+  font-family: avenir;
+  width: 20em;
+  line-height: 2;
+  background-color: white;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom_select::after{
+  content: '\25BC';
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 1em;
+  pointer-events: none;
+  transform: rotate(270deg);
+  transition: all 0.3s ease-in-out;
+}
+
+.custom_select.rotate::after{
+  transform: rotate(0deg)
+}
+
+.custom_select p {
+  padding: 0 3rem 0 0.5rem;
+  margin: 0;
+}
+
+.inside_custom_select {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: scroll;
+  height: 9em;
+  background-color: #f3f0f0;
+  position: absolute;
+  padding: 0 0 0 0.5rem;
+  transform-origin: top;
+  transform: scaleY(1);
+  transition: all 0.3s ease-in-out;
+}
+
+.inside_custom_select > div{
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.hidden{
+  transform: scale(1, 0);
+}
+
+.filterForm > .extraFields {
+  display: block;
+  margin-top: 1rem;
+}

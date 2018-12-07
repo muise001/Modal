@@ -1,0 +1,109 @@
+#loader-container {
+  z-index: 999;
+  width: 10rem;
+  height: 10rem;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: -5rem;
+}
+
+#loader-container h4 {
+  margin: 0;
+  font-family: Lato,Helvetica Neue,Arial,Helvetica,sans-serif;
+  animation: fade-in-out 1.5s infinite;
+  color: #A72552;
+}
+
+#flipbase-loader{
+  top: 5rem;
+  left: 43rem;
+  animation: flip 1.5s infinite
+}
+
+#flipbase-loader .tilt{
+  transform: rotate(-45deg) scaleX(-1);
+  height: 10rem;
+  width: 10rem;
+}
+
+#flipbase-loader .tilt > div {
+  height: 1.26rem;
+  background-color: #A72552;
+  position: absolute;
+  transform-origin: right;
+}
+
+#flipbase-loader #bar1 {
+  top: 2.3rem;
+  right: 4.95rem;
+  width: 1.6rem;
+  animation-delay: 0.4s;
+  animation: 1.5s grow3 infinite linear;
+}
+
+#flipbase-loader #bar2 {
+  top: 4rem;
+  right: 3.6rem;
+  width: 3rem;
+  animation-delay: 0.6s;
+  animation: 1.5s grow2 infinite linear;
+}
+
+#flipbase-loader #bar3 {
+  top: 5.75rem;
+  right: 2.1rem;
+  width: 4.7rem;
+  animation: 1.5s grow infinite linear;
+}
+
+@keyframes fade-in-out{
+  0%, 100%{
+    opacity: 0.2
+  }
+  50% {
+    opacity: 1
+  }
+}
+
+@keyframes flip {
+  0%, 60% {
+    transform: rotateY(0deg)
+  } 100% {
+    transform: rotateY(360deg)
+  }
+}
+
+@keyframes grow {
+  0%, 10% {
+    transform: scaleX(0);
+  } 20%, 60%{
+    opacity: 1;
+    transform: scaleX(1)
+  } 90%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes grow2 {
+  0%, 30% {
+    transform: scaleX(0);
+  } 40%, 60%{
+    opacity: 1;
+    transform: scaleX(1)
+  } 90%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes grow3 {
+   0%, 50% {
+    transform: scaleX(0);
+  } 60%{
+    opacity: 1;
+    transform: scaleX(1)
+  } 90%, 100% {
+    opacity: 0;
+  }
+}

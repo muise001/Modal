@@ -1,21 +1,26 @@
-import { h } from "preact";
+import { h, Component } from "preact";
 import InfoButton from "./infoButton"
+import InfoPopup from "./infoPopup"
+import "./style.less"
 
-const Footer = props => {
-  const footerStyle = {
-    width: "100%",
-    height: "3rem",
-    position: "absolute",
-    bottom: "1rem",
-    fontFamily: "sans-serif",
-    textAlign: "center"
+class Footer extends Component {
+  constructor(props){
+    super(props)
+    this.state = { isPopupOpen: false }
   }
 
+  togglePopup(){
+    console.log("togglesd");
+    this.setState({isPopupOpen : !this.state.isPopupOpen})
+  }
+
+  render(){
   return (
-    <footer style={footerStyle}>
-      <InfoButton />
+    <footer className="modalFooter">
+      <InfoButton togglePopup={this.togglePopup.bind(this)} />
+      <InfoPopup isOpen={this.state.isPopupOpen} />
     </footer>
   )
+  }
 }
-
 export default Footer

@@ -4,7 +4,7 @@ import Videos from "./video"
 const Content = props => {
   return (
     <div>
-      <Videos videos={props.videos} />
+      <Videos onFilterChange={props.onFilterChange} videos={props.videos} />
     </div>
   )
 }

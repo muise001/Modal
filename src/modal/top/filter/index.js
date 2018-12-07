@@ -9,21 +9,21 @@ class SearchAndFilter extends Component {
     this.state = {isOpen: false}
   }
 
-  openMenu(){
-    this.setState({isOpen: true})
-  }
-
-  closeMenu(){
-    this.setState({isOpen: false})
+  toggleFilterMenu(){
+    this.setState({isOpen: !this.state.isOpen})
   }
 
   render(){
     const className = (this.state.isOpen) ? "open " : "";
     return(
-      <form className={`searchForm ${className}`} id="searchForm">
-        <SearchBar openFilterMenu={this.openMenu.bind(this)}/>
-        <FilterMenu isOpen={this.state.isOpen} closeFilterMenu={this.closeMenu.bind(this)}/>
-      </form>
+      <div className={`searchForm ${className}`} id="searchForm">
+        <SearchBar toggleFilterMenu={this.toggleFilterMenu.bind(this)}/>
+        <FilterMenu
+          onFilterChange={this.props.onFilterChange}
+          toggleFilterMenu={this.toggleFilterMenu.bind(this)}
+          useFilters={this.props.useFilters}
+          />
+      </div>
     )
   }
 }
