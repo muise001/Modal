@@ -14,7 +14,7 @@ const PrivacyInput = ({onFilterChange}) => {
       </div>
       <div>
         <label htmlFor="privacyInput3">All</label>
-        <input onChange={() => {onFilterChange('privacy=')}} checked id="privacyInput3" name="privacyInput" value="all" type="radio"/>
+        <input onChange={() => {onFilterChange('privacy=')}} id="privacyInput3" name="privacyInput" value="all" type="radio"/>
       </div>
     </div>
   )

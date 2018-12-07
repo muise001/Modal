@@ -35,7 +35,6 @@ class FilterForm extends Component {
   }
 
   render(){
-    console.log(this.state.queries);
     return (
       <div>
         <form className="filterForm">

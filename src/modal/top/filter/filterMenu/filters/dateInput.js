@@ -11,13 +11,21 @@ class DateInput extends Component {
     (value === 'on') ? this.setState({selectBetween : false}) : this.setState({selectBetween : true})
   }
 
-  render(){
+  createValidDateVar(e){
+    let { name, value } = e.target
+    // TODO: start = end + 1 dag
+    name = name === "both" ? "start" : null
+    const date = value ? new Date(value).toISOString() : ``
+    this.props.onFilterChange(`${name}=${date}`)
+  }
+
+  render() {
     const showElement = (!this.state.selectBetween) ? (
-      <input onChange={(e) => {this.props.onFilterChange(`start=${new Date(e.target.value).toISOString()}`)}} type="date"/> ) :
+      <input name="both" onChange={this.createValidDateVar.bind(this)} type="date"/> ) :
       (
       <div>
-        <input onChange={(e) => {this.props.onFilterChange(`start=${new Date(e.target.value).toISOString()}`)}} type="date" />
-        <input onChange={(e) => {this.props.onFilterChange(`end=${new Date(e.target.value).toISOString()}`)}} type="date" />
+        <input name="start" onChange={this.createValidDateVar.bind(this)} type="date" />
+        <input name="end" onChange={this.createValidDateVar.bind(this)} type="date" />
       </div>)
 
     return (

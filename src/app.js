@@ -5,28 +5,14 @@ class App extends Component{
   constructor(){
     super()
     this.state = {
-      blurStyle: {backgroundColor: "rgba(0,0,0,0.4)", width: "100vw", height: "100vh", left:"0", top:"0", position:"absolute", zIndex: "999"},
+      queries: [],
+      blurStyle: {backgroundColor: "rgba(0,0,0,0.4)", width: "100vw", height: "100vh", left:"0", top:"0", position:"absolute", zIndex: "999"}
     }
   }
 
   componentWillMount(){
     this.fetchData()
   }
-
-  // handleQueryChange(q){
-  //   console.log(q);
-  //   const qSplit = q.split("=")[0];
-  //   let { queries } = this.state
-  //   queries.forEach((query, i) => {
-  //     const querySplit = query.split("=")[0];
-  //     if (querySplit === qSplit) {
-  //       queries.splice(i, 1);
-  //       !q.includes("DELETE") ? queries.push(q) : null;
-  //     }
-  //   })
-  //   console.log(queries);
-  //   this.queryBuidler(queries)
-  // }
 
   onFilterChange(q){
     let { queries } = this.state
@@ -46,11 +32,11 @@ class App extends Component{
         }
       })
     }
-    console.log("After", queries);
+    // console.log("After", queries);
+    this.setState({queries})
   }
 
   useFilters(){
-    console.log('hallo');
     const {queries} = this.state
     if (queries) {
       let combinedQuery = ""
@@ -67,10 +53,10 @@ class App extends Component{
     q = q ? q : ""
     queries = queries ? queries : [];
     console.log(q);
-    const baseUrl = 'SECRET';
-    const id = "SECRET";
-    const token = "SECRET"
-    // JSON.parse(window.localStorage._flipbase_eb_jwt_token).token
+    const baseUrl = '';
+    const id = "";
+    const token = ""
+
 
     fetch(`${baseUrl}/organizations/${id}/eb/videos${q}`, {
       mode: 'cors',
@@ -79,7 +65,7 @@ class App extends Component{
       }
     })
     .then(data => data.json())
-    .then(data => this.setState({data : data.data, queries}))
+    .then(data => this.setState({data : data.data}))
   }
 
   destroyComponent(){
@@ -94,6 +80,7 @@ class App extends Component{
           onClick={this.destroyComponent}
         />
         <Modal
+          filters={this.state.queries}
           useFilters={this.useFilters.bind(this)}
           onFilterChange={this.onFilterChange.bind(this)}
           videos={this.state.data}

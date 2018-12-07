@@ -9,7 +9,7 @@ const Modal = props => {
   return (props.videos ?
     <div className="modal">
       <Header useFilters={props.useFilters} onFilterChange={props.onFilterChange} destroy={props.destroy}/>
-      <Content onFilterChange={props.onFilterChange} videos={props.videos} />
+      <Content filters={props.filters} useFilters={props.useFilters} onFilterChange={props.onFilterChange} videos={props.videos} />
       <Footer />
     </div> : <div className="modal"><FlipbaseLoader /></div>)
 }
