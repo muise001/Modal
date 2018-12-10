@@ -8,7 +8,7 @@ const Content = props => {
     <div className="contentWrapper">
       <ShowFiltersToRemove filters={props.filters} useFilters={props.useFilters} onFilterChange={props.onFilterChange} />
       <Videos onFilterChange={props.onFilterChange} videos={props.videos} />
-      <LoadMore onFilterChange={props.onFilterChange} videos={props.videos} />
+      <LoadMore useFilters={props.useFilters} onFilterChange={props.onFilterChange} videos={props.videos} />
     </div>
   )
 }

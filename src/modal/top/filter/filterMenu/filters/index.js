@@ -28,6 +28,7 @@ class FilterForm extends Component {
     }
     else {
       arr.indexOf(obj)
+      // TODO: Change this for better accesability
       let index = arr.findIndex(x => x.name === obj.name);
       arr.splice(index, 1)
     }

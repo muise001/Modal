@@ -4,15 +4,14 @@ import "./style.less"
 
 const Videos = ({ videos, onFilterChange }) => {
   const cards = videos.map(video => {
-    video = video.attributes;
     return(
-      <section className="card" key={video.player_id}>
+      <section className="card" key={video.player_id} id={video.id} onClick={(e)=> {console.log(`https://app.flipbase.com/share/${video.attributes.video}`)}}>
         <img
           style={{ width: "10rem" }}
-          src={ video.thumbnails[3].url }
-          alt={ video.title }
+          src={ video.attributes.thumbnails[3].url }
+          alt={ video.attributes.title }
         />
-        <p>{ video.title }</p>
+        <p>{ video.attributes.title }</p>
       </section>
     );
   });

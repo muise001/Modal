@@ -13,10 +13,16 @@ class DateInput extends Component {
 
   createValidDateVar(e){
     let { name, value } = e.target
-    // TODO: start = end + 1 dag
-    name = name === "both" ? "start" : null
-    const date = value ? new Date(value).toISOString() : ``
-    this.props.onFilterChange(`${name}=${date}`)
+    if (name === "both") {
+      const day = value ? new Date(value).toISOString() : ``
+      const nextDay = value ? new Date(value) : ``
+      value ? nextDay.setDate(new Date(value).getDate()+1) : null
+      this.props.onFilterChange(`start=${day}`)
+      this.props.onFilterChange(`end=${value ? nextDay.toISOString() : ""}`)
+    } else {
+      const date = value ? new Date(value).toISOString() : ``
+      this.props.onFilterChange(`${name}=${date}`)
+    }
   }
 
   render() {
