@@ -1,7 +1,5 @@
 import { h, Component } from "preact"
 import DateInput from "./dateInput"
-import RecordedOnInput from "./recordedOnInput"
-import PrivacyInput from "./privacyInput"
 import AddFilters from "./addFilters"
 import MoreFilterFields from "./moreFilterFields"
 import "../../style.less"
@@ -11,8 +9,7 @@ class FilterForm extends Component {
     super(props)
     this.state = {
       arr: [],
-      dummyShit: ["Last Name", "E-mail address", "First Name", "E-mail address", "First Name", "E-mail address", "First Name"],
-      queries: []
+      dummyShit: ["First Name", "Last Name", "E-mail address"],
     }
   }
 
@@ -40,9 +37,7 @@ class FilterForm extends Component {
       <div>
         <form className="filterForm">
           <DateInput onFilterChange={this.props.onFilterChange} />
-          <RecordedOnInput onFilterChange={this.props.onFilterChange} />
-          <PrivacyInput onFilterChange={this.props.onFilterChange}/>
-          <MoreFilterFields arr={this.state.arr} />
+          <MoreFilterFields onFilterChange={this.props.onFilterChange} arr={this.state.arr} />
         </form>
         <div className="divider" />
         <AddFilters handleChange={this.handleChange.bind(this)} arr={this.state.arr} filterOptions={this.state.dummyShit} />

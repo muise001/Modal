@@ -1,8 +1,13 @@
 import { h } from 'preact'
 
 const AddFilterOptions = ({filterOptions, isOpen, handleChange}) => {
+  // Rename "First name" to "first_name" and "E-mail Address" to "email" (for filterquery fields[email])
   const options = filterOptions.map((option) => {
-  const id = option.toLowerCase().replace(/ /g, "_")
+  let id = option.toLowerCase().replace(/ /g, "_")
+  id = id.replace("-", "")
+  id.includes("_address") ? id = id.split("_address")[0] : null
+
+
     return (
       <div>
         <label htmlFor={id}>{option}</label>
@@ -19,19 +24,3 @@ const AddFilterOptions = ({filterOptions, isOpen, handleChange}) => {
 }
 
 export default AddFilterOptions
-
-
-// <section className={`inside_custom_select ${(this.state.isOpen ? "" : "hidden")}`}>
-//   <label htmlFor="romantisch">Romantisch</label>
-//   <input id="romantisch" value="romantisch" type="checkbox" />
-//   <label htmlFor="detective">Detective</label>
-//   <input id="detective" type="checkbox" />
-//   <label htmlFor="humor">Humor</label>
-//   <input id="humor" type="checkbox" />
-//   <label htmlFor="appel">appel</label>
-//   <input id="appel" type="checkbox" />
-//   <label htmlFor="peer">peer</label>
-//   <input id="peer" type="checkbox" />
-//   <label htmlFor="banaan">banaan</label>
-//   <input id="banaan" type="checkbox" />
-// </section>

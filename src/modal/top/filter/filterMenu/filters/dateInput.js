@@ -7,13 +7,14 @@ class DateInput extends Component {
   }
 
   handleChange(e){
-    const {value} = e.target;
+    const { value } = e.target;
     (value === 'on') ? this.setState({selectBetween : false}) : this.setState({selectBetween : true})
   }
 
   createValidDateVar(e){
     let { name, value } = e.target
     if (name === "both") {
+      // check dag en volgende dag
       const day = value ? new Date(value).toISOString() : ``
       const nextDay = value ? new Date(value) : ``
       value ? nextDay.setDate(new Date(value).getDate()+1) : null
@@ -27,8 +28,7 @@ class DateInput extends Component {
 
   render() {
     const showElement = (!this.state.selectBetween) ? (
-      <input name="both" onChange={this.createValidDateVar.bind(this)} type="date"/> ) :
-      (
+      <input name="both" onChange={this.createValidDateVar.bind(this)} type="date"/> ) : (
       <div>
         <input name="start" onChange={this.createValidDateVar.bind(this)} type="date" />
         <input name="end" onChange={this.createValidDateVar.bind(this)} type="date" />

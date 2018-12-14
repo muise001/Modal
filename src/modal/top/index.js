@@ -1,11 +1,11 @@
 import { h } from "preact";
 import Close from "./close"
-import SearchAndFilter from "./filter"
+import FilterIcon from "./filter"
 
 const Header = props => {
   return (
     <header className="modalHeader">
-      <SearchAndFilter useFilters={props.useFilters} onFilterChange={props.onFilterChange} />
+      <FilterIcon onFilterChange={props.onFilterChange} />
       <Close destroy={props.destroy} />
     </header>
   )

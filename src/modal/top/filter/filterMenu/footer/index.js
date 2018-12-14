@@ -5,7 +5,7 @@ const FilterMenuFooter = props => {
   return (
     <div>
       <div className="divider" />
-      <Buttons useFilters={props.useFilters} toggleFilterMenu={props.toggleFilterMenu}/>
+      <Buttons onFilterChange={props.onFilterChange} toggleFilterMenu={props.toggleFilterMenu}/>
     </div>
   )
 }

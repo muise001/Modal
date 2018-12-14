@@ -8,7 +8,10 @@ const FilterMenu = props => {
     <div className="filterMenu">
       <FilterMenuHeader toggleFilterMenu={props.toggleFilterMenu}/>
       <FilterForm onFilterChange={props.onFilterChange}/>
-      <FilterMenuFooter useFilters={props.useFilters} toggleFilterMenu={props.toggleFilterMenu} />
+      <FilterMenuFooter
+        onFilterChange={props.onFilterChange}
+        toggleFilterMenu={props.toggleFilterMenu}
+      />
     </div>
   )
 }

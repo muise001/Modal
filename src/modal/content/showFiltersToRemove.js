@@ -1,19 +1,16 @@
 import { h, Component } from 'preact'
 
-class ShowFiltersToRemove extends Component {
-  constructor(props){
-    super(props)
-  }
+const ShowFiltersToRemove = ({ filters, onFilterChange }) => {
+  let arr = []
+  Object.keys(filters).map((filter, i) => {
+    let keys = Object.keys(filters)
+    if (filters[filter].value && filters[filter].name) {
+      let display = filters[filter].name === "Start" || filters[filter].name === "End" ? filters[filter].value.substring(0,10) : filters[filter].value
+      arr.push(<div className="filterThatCanBeRemoved">{`${filters[filter].name}: ${display}`} <span id={`${keys[i]}`} onClick={(e) => {onFilterChange(`${e.target.id}=`, true)}}>&#x2716;</span></div>)
+    }})
 
-  render() {
-    let arr = this.props.filters.map(filter => {
-      let fSplit = filter.split("=")
-      fSplit[0] === "start" || fSplit[0] === "end" ? fSplit[1] = fSplit[1].substring(0,10) : null
-      return <div className="filterThatCanBeRemoved">{`${fSplit[0]}: ${fSplit[1]}`} <span id={`${fSplit[0]}`} onClick={(e) => {this.props.onFilterChange(`${e.target.id}=`, true)}}>&#x2716;</span></div>
-    })
-
-    return <div className="showFiltersDiv">{arr}</div>;
-  }
+  const className = arr.length < 1 ? "invisible" : null
+  return <div className={`showFiltersDiv ${className}`}>{arr}</div>;
 }
 
 export default ShowFiltersToRemove

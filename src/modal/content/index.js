@@ -6,9 +6,9 @@ import ShowFiltersToRemove from "./showFiltersToRemove"
 const Content = props => {
   return (
     <div className="contentWrapper">
-      <ShowFiltersToRemove filters={props.filters} useFilters={props.useFilters} onFilterChange={props.onFilterChange} />
-      <Videos onFilterChange={props.onFilterChange} videos={props.videos} />
-      <LoadMore useFilters={props.useFilters} onFilterChange={props.onFilterChange} videos={props.videos} />
+      <ShowFiltersToRemove filters={props.filters} onFilterChange={props.onFilterChange} />
+      <Videos videoSelected={props.videoSelected} onFilterChange={props.onFilterChange} videos={props.videos} />
+      <LoadMore fetchData={props.fetchData} videos={props.videos} />
     </div>
   )
 }

@@ -6,80 +6,89 @@ class App extends Component{
   constructor(){
     super()
     this.state = {
+      init: {
+        blurredBackground: true,
+        responsive: true,
+        maxWidth: 400,
+        maxHeight: 300,
+        primaryColor: "#FF000",
+        textColor: "#000",
+        fontFamily: "Times new Roman",
+        jsonWebToken: "xyz",
+        embedMethod: "responsive_iframe", // "iframe", "javascript"
+        maxWidthEmbeddedVideo: 300,
+        maxHeigtEmbeddedVideo: 300
+      },
       error: "",
-      queries: [],
-      blurStyle: {backgroundColor: "rgba(0,0,0,0.4)", width: "100vw", height: "100vh", left:"0", top:"0", position:"absolute", zIndex: "999"}
+      queries: {
+        privacy: {
+          value: "public"
+        },
+        start: {
+          value: "",
+          name: "Start"
+        },
+        end: {
+          value: "",
+          name: "End"
+        },
+        first_name: {
+          value: "",
+          name: "First name"
+        },
+        last_name: {
+          value: "",
+          name: "Last name"
+        },
+        email: {
+          value: "",
+          name: "e-mail"
+        }
+      }
     }
   }
 
+  // Haal data op voor de eerste keer
   componentWillMount(){
+    this.setState({ init : this.props.options })
     this.fetchData()
   }
 
-  // q.after= "xyz";
-
+  // Als er een filter verandert, wordt hij hier toegevoegd, verwijderd of overschreven
   onFilterChange(q, changeImmediate){
     let { queries } = this.state
-    // let querystring = "?";
-    // Object.keys(queries).forEach(prop => {
-    //   if (queries.hasOwnProperty(prop))
-    //     querystring += `${props}=${queries[prop]}`
-    // })
-    // querystring
-    // let newQueries = queries;
-    //
-    // Object.keys(q).forEach((prop) => {
-    //   newState[prop] = q[prop]
-    // })
-    //
-    // this.setState({
-    //   queries: newQueries
-    // })
-
-
-    // TODO: Chane filter query-system
-    console.log(q);
-    const qSplit = q.split("=")
-    if (queries.length === 0) {
-      qSplit[1] !== "" ? queries.push(q) : null
-    } else {
-      let match = 0
-      queries.forEach((query, i) => {
-        const querySplit = query.split("=")[0]
-        if(querySplit === qSplit[0]){
-          qSplit[1] !== "" ? queries[i] = q : queries.splice(i, 1)
-          match++;
-        } else if (i === queries.length-1 && querySplit !== qSplit[0] && qSplit[1] !== "" && match === 0) {
-          queries.push(q);
-          match++
-        }
-      })
-    }
-    console.log("After", queries);
-    this.setState({queries})
-    changeImmediate ? this.useFilters() : null
+    Object.keys(queries).forEach(prop => {
+      if (q.split("=")[0] === prop) {
+        queries[prop].value = q.split("=")[1]
+      }
+    })
+    this.setState({ queries });
+    !changeImmediate ? null : this.fetchData()
   }
 
-  useFilters(){
-    const {queries} = this.state
-    if (queries) {
-      let combinedQuery = ""
-      queries.forEach((query, i) => {
-        const queryWithPrefix = i === 0 ? `?${query}` : `&${query}`;
-        combinedQuery = combinedQuery + queryWithPrefix
-      });
-      console.log(combinedQuery);
-      this.fetchData(combinedQuery, queries)
-    }
+  // Hier wordt de query-string gemaakt
+  useFilters(showMore){
+    const { queries } = this.state
+    let str = ""
+    Object.keys(queries).forEach((prop, i) => {
+      let keys = Object.keys(queries)
+      if (queries[prop].value){
+        // Als er een waarde is aangeklikt waar "fields[] omheen moet in de querystring, wordt hij hier toegevoegd"
+        keys[i] = keys[i] === "first_name" || keys[i] === "last_name" || keys[i] === "email" ? `fields[${keys[i]}]` : keys[i];
+        const query = `${keys[i]}=${queries[prop].value}`
+        str += str.length === 0 ? `?${query}` : `&${query}`
+        console.log(str);
+      }
+    })
+    str += !showMore ? "" : (str = str.length === 0 ? `?before=${this.state.data[this.state.data.length-1].id}` : `&before=${this.state.data[this.state.data.length-1].id}`)
+    return str
   }
 
-  fetchData(q, queries){
-    q = q ? q : ""
-    queries = queries ? queries : [];
-    const baseUrl = '';
+  fetchData(showMore){
+    const q = this.useFilters(showMore)
+    const baseUrl = 'https://app.flipbase.com/api';
     const id = "";
-    const token = ""
-    
+    const token = "";
 
     fetch(`${baseUrl}/organizations/${id}/eb/videos${q}`, {
       mode: "cors",
@@ -88,11 +97,14 @@ class App extends Component{
       }
     })
     .then(resp => {
+      // Check of er een fout is
       if (resp.status < 200 || resp.status >= 400) {
+        // foutafhandeling
         if (resp.status === 401) {
             this.setState({ error: "Invalid Token, try again later" });
             return;
         }
+          // onbekende fout
           this.setState({ error: `error ${resp.status}` });
           return;
       } if (resp.status === 204) {
@@ -101,18 +113,10 @@ class App extends Component{
       }
       resp.json()
         .then(json => {
-          // // TODO: Change filter-query system
-          if (queries.length >= 1) {
-            queries.forEach(q => {
-              const qSplit = q.split("=")
-              qSplit[0].includes("before") ? this.setState({data : [...this.state.data, ...json.data]}) : this.setState({data : json.data})
-              console.log(this.state.data);
-            })
-          } else {
-            this.setState({data : json.data})
-          }
+          console.log(json.data);
+          showMore ? this.setState({data : [...this.state.data, ...json.data]}) : this.setState({data : json.data})
+          console.log(this.state.data);
         })
-
     })
     .catch(error => {
         this.setState({ error: `No internet connection` });
@@ -121,36 +125,35 @@ class App extends Component{
       });
   }
 
-  destroyComponent(){
-    document.body.removeChild(document.getElementById("modal"))
-  }
-
   removeError(){
     this.setState({error: ""})
   }
 
   render() {
+    const { emit } = this.props.emitter;
+    const blurredBackground = !this.state.init.blurredBackground ? "none" : null
     return (
       <div id="modal">
         <div
-          style={this.state.blurStyle}
-          onClick={this.destroyComponent}
+          className={`blurredBackground ${blurredBackground}`}
+          onClick={() => emit("close")}
         />
         <Modal
-          filters={this.state.queries}
-          useFilters={this.useFilters.bind(this)}
-          onFilterChange={this.onFilterChange.bind(this)}
-          videos={this.state.data}
-          destroy={this.destroyComponent}
+          videoSelected={this.props.emitter}                // Voor klik op video
+          filters={this.state.queries}                      // Voor showFiltersToRemove
+          fetchData={this.fetchData.bind(this)}             // Voor loadmore en ShowFiltersToRemove
+          onFilterChange={this.onFilterChange.bind(this)}   // Voor filters
+          videos={this.state.data}                          // Om videos te kunnen tonen
+          destroy={() => emit("close")}                     // Om Modal te destroyen
         />
         <ErrorHandler
-          removeError={this.removeError.bind(this)}
-          error={this.state.error}
+          removeError={this.removeError.bind(this)}         // Verwijder error (geen resultaten bijvoorbeeld)
+          error={this.state.error}                          // Toon error
         />
       </div>
     )
   }
 }
 
-render(<App />, document.body)
-// export default App
+// render(<App />, document.body)
+export default App

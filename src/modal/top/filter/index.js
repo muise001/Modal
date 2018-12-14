@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 import FilterMenu from './filterMenu'
-import SearchBar from './searchBar'
+import FilterIcon from './FilterIcon'
 import "./style.less"
 
 class SearchAndFilter extends Component {
@@ -14,15 +14,14 @@ class SearchAndFilter extends Component {
   }
 
   render(){
-    const className = (this.state.isOpen) ? "open " : "";
+    const className = (this.state.isOpen) ? "open" : "";
     return(
       <div className={`searchForm ${className}`} id="searchForm">
-        <SearchBar toggleFilterMenu={this.toggleFilterMenu.bind(this)}/>
+        <FilterIcon toggleFilterMenu={this.toggleFilterMenu.bind(this)}/>
         <FilterMenu
           onFilterChange={this.props.onFilterChange}
           toggleFilterMenu={this.toggleFilterMenu.bind(this)}
-          useFilters={this.props.useFilters}
-          />
+        />
       </div>
     )
   }

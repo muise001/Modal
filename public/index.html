@@ -26,24 +26,41 @@
 </head>
 
 <body>
-  <button type="button" id="button">Choose Video</button>
-  <noscript>
-     You need to enable JavaScript to run this app.
-   </noscript>
+  <button type="button" id="openVideoModal">Choose Video</button>
+
   <div id="root"></div>
-  <!-- <script>
-    var plugin = new SelectVideoModal({
+  <div id="videoTarget">
 
-    });
-
-    var el = document.getElementById('button');
-    el.addEventListener('click', function(evt) {
-      // evt.preventDefault();
-      plugin.render();
-    });
-  </script> -->
+  </div>
   <!--propably need to add this as a dynamic load to video page -->
-
 </body>
+<script defer>
+  function videoSelected(selectedVideo) {
+    if (selectedVideo) {
+      console.log(selectedVideo.attributes.thumbnails[1].url)
+      document.getElementById("videoTarget").innerHTML = "<img src='" + selectedVideo.attributes.thumbnails[1].url + "''/>"
+    }
+  }
+  document.getElementById("openVideoModal").addEventListener("click", ()=> {
 
+    var plugin = Flipbase.SelectVideoModal({
+      blurredBackground: true,
+      responsive: true,
+      maxWidth: 400,
+      maxHeight: 300,
+      primaryColor: "#FF000",
+      textColor: "#000",
+      fontFamily: "Times new Roman",
+
+      jsonWebToken: "abc",
+      embedMethod: "responsive_iframe", // "iframe", "javascript"
+      maxWidthEmbeddedVideo: 300,
+      maxHeigtEmbeddedVideo: 300,
+
+      videoSelected
+    })
+    plugin.open()
+    plugin.on("video", videoSelected)
+  })
+</script>
 </html>

@@ -10,7 +10,7 @@ module.exports = {
 
   mode: process.env.NODE_ENV || "development",
 
-  entry: APP_PATH + "/app.js",
+  entry: APP_PATH + "/index.js",
 
   output: {
     path: path.resolve(__dirname, BUILD_PATH),
@@ -54,6 +54,10 @@ module.exports = {
 
   plugins: [
     new CleanWebpackPlugin([BUILD_PATH]),
+
+    new webpack.DefinePlugin({
+      TOKEN: JSON.stringify(process.env.TOKEN)
+    }),
 
     new HtmlWebpackPlugin({
       title: "Emiels video insert plugin",
