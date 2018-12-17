@@ -4,9 +4,10 @@ import FilterIcon from './FilterIcon'
 import "./style.less"
 
 class SearchAndFilter extends Component {
-  constructor(props){
+  constructor(props, context){
     super(props)
     this.state = {isOpen: false}
+    context.emitter.on("toggleFilterMenu", this.toggleFilterMenu.bind(this))
   }
 
   toggleFilterMenu(){
@@ -17,11 +18,8 @@ class SearchAndFilter extends Component {
     const className = (this.state.isOpen) ? "open" : "";
     return(
       <div className={`searchForm ${className}`} id="searchForm">
-        <FilterIcon toggleFilterMenu={this.toggleFilterMenu.bind(this)}/>
-        <FilterMenu
-          onFilterChange={this.props.onFilterChange}
-          toggleFilterMenu={this.toggleFilterMenu.bind(this)}
-        />
+        <FilterIcon />
+        <FilterMenu />
       </div>
     )
   }

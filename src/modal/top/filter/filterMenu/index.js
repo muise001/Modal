@@ -6,12 +6,9 @@ import FilterMenuFooter from "./footer"
 const FilterMenu = props => {
   return (
     <div className="filterMenu">
-      <FilterMenuHeader toggleFilterMenu={props.toggleFilterMenu}/>
-      <FilterForm onFilterChange={props.onFilterChange}/>
-      <FilterMenuFooter
-        onFilterChange={props.onFilterChange}
-        toggleFilterMenu={props.toggleFilterMenu}
-      />
+      <FilterMenuHeader />
+      <FilterForm />
+      <FilterMenuFooter />
     </div>
   )
 }

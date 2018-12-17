@@ -2,11 +2,11 @@ import { h } from "preact";
 import Close from "./close"
 import FilterIcon from "./filter"
 
-const Header = props => {
+const Header = (props, {emitter: {emit}}) => {
   return (
     <header className="modalHeader">
-      <FilterIcon onFilterChange={props.onFilterChange} />
-      <Close destroy={props.destroy} />
+      <FilterIcon />
+      <Close destroy={() => {emit("close")}} />
     </header>
   )
 }

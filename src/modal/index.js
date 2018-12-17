@@ -7,15 +7,9 @@ import "./style.less"
 const Modal = props => {
   return (props.videos ?
     <div className="modal">
-      <Header
-        onFilterChange={props.onFilterChange}
-        destroy={props.destroy}
-      />
+      <Header />
       <Content
-        videoSelected={props.videoSelected}
-        fetchData={props.fetchData}
         filters={props.filters}
-        onFilterChange={props.onFilterChange}
         videos={props.videos}
       />
     </div> : <div className="modal"><FlipbaseLoader /></div>)

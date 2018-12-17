@@ -1,10 +1,11 @@
 import { h, render, Component } from "preact";
 import Modal from "./modal"
 import ErrorHandler from "./errorHandler"
+import Provider from 'preact-context-provider';
 
 class App extends Component{
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = {
       init: {
         blurredBackground: true,
@@ -46,6 +47,10 @@ class App extends Component{
         }
       }
     }
+    const { emitter } = this.props
+    emitter.on('onFilterChange', this.onFilterChange.bind(this))
+    emitter.on('loadMore', this.fetchData.bind(this))
+    emitter.on('removeError',this.removeError.bind(this))
   }
 
   // Haal data op voor de eerste keer
@@ -56,6 +61,7 @@ class App extends Component{
 
   // Als er een filter verandert, wordt hij hier toegevoegd, verwijderd of overschreven
   onFilterChange(q, changeImmediate){
+    console.log("changed", q);
     let { queries } = this.state
     Object.keys(queries).forEach(prop => {
       if (q.split("=")[0] === prop) {
@@ -88,7 +94,7 @@ class App extends Component{
     const q = this.useFilters(showMore)
     const baseUrl = 'https://app.flipbase.com/api';
     const id = "";
-    const token = "";
+    const token = ;
 
     fetch(`${baseUrl}/organizations/${id}/eb/videos${q}`, {
       mode: "cors",
@@ -115,7 +121,6 @@ class App extends Component{
         .then(json => {
           console.log(json.data);
           showMore ? this.setState({data : [...this.state.data, ...json.data]}) : this.setState({data : json.data})
-          console.log(this.state.data);
         })
     })
     .catch(error => {
@@ -133,24 +138,21 @@ class App extends Component{
     const { emit } = this.props.emitter;
     const blurredBackground = !this.state.init.blurredBackground ? "none" : null
     return (
-      <div id="modal">
-        <div
-          className={`blurredBackground ${blurredBackground}`}
-          onClick={() => emit("close")}
-        />
-        <Modal
-          videoSelected={this.props.emitter}                // Voor klik op video
-          filters={this.state.queries}                      // Voor showFiltersToRemove
-          fetchData={this.fetchData.bind(this)}             // Voor loadmore en ShowFiltersToRemove
-          onFilterChange={this.onFilterChange.bind(this)}   // Voor filters
-          videos={this.state.data}                          // Om videos te kunnen tonen
-          destroy={() => emit("close")}                     // Om Modal te destroyen
-        />
-        <ErrorHandler
-          removeError={this.removeError.bind(this)}         // Verwijder error (geen resultaten bijvoorbeeld)
-          error={this.state.error}                          // Toon error
-        />
-      </div>
+      <Provider emitter={this.props.emitter}>
+        <div id="modal">
+          <div
+            className={`blurredBackground ${blurredBackground}`}
+            onClick={() => emit("close")}
+          />
+          <Modal
+            filters={this.state.queries}                      // Voor showFiltersToRemove
+            videos={this.state.data}                          // Om videos te kunnen tonen
+          />
+          <ErrorHandler
+            error={this.state.error}                          // Toon error
+          />
+        </div>
+      </Provider>
     )
   }
 }

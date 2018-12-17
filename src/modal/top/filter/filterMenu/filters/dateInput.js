@@ -4,6 +4,7 @@ class DateInput extends Component {
   constructor(props){
     super(props)
     this.state = {selectBetween : true}
+    this.createValidDateVar = this.createValidDateVar.bind(this)
   }
 
   handleChange(e){
@@ -11,33 +12,36 @@ class DateInput extends Component {
     (value === 'on') ? this.setState({selectBetween : false}) : this.setState({selectBetween : true})
   }
 
-  createValidDateVar(e){
-    let { name, value } = e.target
+  createValidDateVar(e) {
+    const { name, value } = e.target;
+    const { emit } = this.context.emitter;
+    console.log(name, value);
     if (name === "both") {
       // check dag en volgende dag
       const day = value ? new Date(value).toISOString() : ``
       const nextDay = value ? new Date(value) : ``
       value ? nextDay.setDate(new Date(value).getDate()+1) : null
-      this.props.onFilterChange(`start=${day}`)
-      this.props.onFilterChange(`end=${value ? nextDay.toISOString() : ""}`)
+      emit("onFilterChange", "start=" + day)
+      emit("onFilterChange", "end=" + value ? nextDay.toISOString() : "")
     } else {
       const date = value ? new Date(value).toISOString() : ``
-      this.props.onFilterChange(`${name}=${date}`)
+      emit("onFilterChange",`${name}=${date}`)
     }
   }
 
   render() {
+    const { createValidDateVar, handleChange } = this
     const showElement = (!this.state.selectBetween) ? (
-      <input name="both" onChange={this.createValidDateVar.bind(this)} type="date"/> ) : (
+      <input name="both" onChange={createValidDateVar} type="date"/> ) : (
       <div>
-        <input name="start" onChange={this.createValidDateVar.bind(this)} type="date" />
-        <input name="end" onChange={this.createValidDateVar.bind(this)} type="date" />
+        <input name="start" onChange={createValidDateVar} type="date" />
+        <input name="end" onChange={createValidDateVar} type="date" />
       </div>)
 
     return (
       <div>
         <label htmlFor="dateInput">Date</label>
-        <select onChange={this.handleChange.bind(this)}>
+        <select onChange={handleChange.bind(this)}>
           <option value="between">between</option>
           <option value="on">on</option>
         </select>

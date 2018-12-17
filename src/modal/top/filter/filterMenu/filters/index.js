@@ -5,12 +5,13 @@ import MoreFilterFields from "./moreFilterFields"
 import "../../style.less"
 
 class FilterForm extends Component {
-  constructor(props){
+  constructor(props, context){
     super(props)
     this.state = {
       arr: [],
-      dummyShit: ["First Name", "Last Name", "E-mail address"],
+      extraFilters: ["First Name", "Last Name", "E-mail address"],
     }
+    context.emitter.on("handleExtraFilterCheckbox", this.handleChange.bind(this))
   }
 
   handleChange(e){
@@ -32,15 +33,22 @@ class FilterForm extends Component {
     this.setState({ arr })
   }
 
+  handleSubmit(e){
+    e.preventDefault()
+    const { emit } = this.context.emitter
+    emit("onFilterChange", "", true)
+    emit("toggleFilterMenu")
+  }
+
   render(){
     return (
       <div>
-        <form className="filterForm">
-          <DateInput onFilterChange={this.props.onFilterChange} />
-          <MoreFilterFields onFilterChange={this.props.onFilterChange} arr={this.state.arr} />
+        <form className="filterForm" onSubmit={this.handleSubmit.bind(this)}>
+          <DateInput />
+          <MoreFilterFields arr={this.state.arr} />
         </form>
         <div className="divider" />
-        <AddFilters handleChange={this.handleChange.bind(this)} arr={this.state.arr} filterOptions={this.state.dummyShit} />
+        <AddFilters arr={this.state.arr} filterOptions={this.state.extraFilters} />
       </div>
     )}
 }
