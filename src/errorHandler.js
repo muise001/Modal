@@ -1,15 +1,17 @@
 import { h } from "preact";
-import Close from "./modal/top/close"
-import "./style.less"
+import Close from "./Components/close";
+import "./style.less";
 
-const ErrorHandler = ({error}, {emitter: {emit}}) => {
-  const className = error ? "show" : ""
+const ErrorHandler = ({ error }, { getState, emitter: { emit } }) => {
+  const state = getState();
+  const className = state.error ? "show" : "";
+
   return (
     <div className={`errorHandler ${className}`}>
       <Close destroy={() => {emit("removeError")}}/>
-      <h4 className="errorMessage">{error}</h4>
+      <h4 className="errorMessage">{state.error}</h4>
     </div>
   )
 }
 
-export default ErrorHandler
+export default ErrorHandler;

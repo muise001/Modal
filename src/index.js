@@ -8,14 +8,14 @@ function SelectVideoModal(options) {
   const emitter = new EventEmitter()
 
   // unmount on click
-  emitter.on("video", function () {
+  emitter.on("video", function(video) {
     emitter.emit("close");
   })
 
   emitter.on("close", function () {
     render(() => null, document.body, root)
   })
-  
+
   return {
     open: function(){
       root = render(<App options={options} emitter={emitter} />, document.body);

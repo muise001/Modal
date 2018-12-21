@@ -1,12 +1,17 @@
-import { h, render, Component } from "preact";
+import { h, Component } from "preact";
 import Modal from "./modal"
 import ErrorHandler from "./errorHandler"
+import Content from "./Modal/Content"
+import Filter from "./Modal/Filter"
 import Provider from 'preact-context-provider';
+import { baseURL, orgId, token, handleFetchError, config, handleJson } from "./Utils/fetch"
+import { queryBuilder } from './Utils/queryBuilder'
 
 class App extends Component{
   constructor(props){
     super(props)
     this.state = {
+      data : [],
       init: {
         blurredBackground: true,
         responsive: true,
@@ -20,6 +25,7 @@ class App extends Component{
         maxWidthEmbeddedVideo: 300,
         maxHeigtEmbeddedVideo: 300
       },
+      isLoading: false,
       error: "",
       queries: {
         privacy: {
@@ -35,20 +41,23 @@ class App extends Component{
         },
         first_name: {
           value: "",
-          name: "First name"
+          name: "First name",
+          fields: true
         },
         last_name: {
           value: "",
-          name: "Last name"
+          name: "Last name",
+          fields: true
         },
         email: {
           value: "",
-          name: "e-mail"
+          name: "e-mail",
+          fields: true
         }
       }
     }
-    const { emitter } = this.props
-    emitter.on('onFilterChange', this.onFilterChange.bind(this))
+    const { emitter } = this.props;
+    emitter.on('filterChange', this.filterChange.bind(this))
     emitter.on('loadMore', this.fetchData.bind(this))
     emitter.on('removeError',this.removeError.bind(this))
   }
@@ -59,103 +68,81 @@ class App extends Component{
     this.fetchData()
   }
 
-  // Als er een filter verandert, wordt hij hier toegevoegd, verwijderd of overschreven
-  onFilterChange(q, changeImmediate){
-    console.log("changed", q);
-    let { queries } = this.state
-    Object.keys(queries).forEach(prop => {
-      if (q.split("=")[0] === prop) {
-        queries[prop].value = q.split("=")[1]
-      }
-    })
-    this.setState({ queries });
-    !changeImmediate ? null : this.fetchData()
+  componentDidMount(){
+    const { primaryColor, fontFamily, textColor } = this.state.init
+    const modal = document.querySelector("#modal")
+    modal.style.setProperty("--FlipbaseVideoPickerPrimaryColor", primaryColor)
+    modal.style.setProperty("--FlipbaseVideoPickerTextColor", textColor)
+    modal.style.setProperty("--FlipbaseVideoPickerFontFamily", `${fontFamily}, sans-serif`)
   }
 
-  // Hier wordt de query-string gemaakt
-  useFilters(showMore){
-    const { queries } = this.state
-    let str = ""
-    Object.keys(queries).forEach((prop, i) => {
-      let keys = Object.keys(queries)
-      if (queries[prop].value){
-        // Als er een waarde is aangeklikt waar "fields[] omheen moet in de querystring, wordt hij hier toegevoegd"
-        keys[i] = keys[i] === "first_name" || keys[i] === "last_name" || keys[i] === "email" ? `fields[${keys[i]}]` : keys[i];
-        const query = `${keys[i]}=${queries[prop].value}`
-        str += str.length === 0 ? `?${query}` : `&${query}`
-        console.log(str);
+  // Als er een filter verandert, wordt hij hier toegevoegd, verwijderd of overschreven
+  filterChange({ name, value }){
+    console.log(name, value)
+    this.setState({
+      ...this.state,
+      queries: {
+        ...this.state.queries,
+        [name]: {
+          ...this.state.queries[name],
+          value
+        }
       }
     })
-    str += !showMore ? "" : (str = str.length === 0 ? `?before=${this.state.data[this.state.data.length-1].id}` : `&before=${this.state.data[this.state.data.length-1].id}`)
-    return str
+    console.log(this.state.queries);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.queries !== this.state.queries) {
+      this.fetchData()
+    }
   }
 
   fetchData(showMore){
-    const q = this.useFilters(showMore)
-    const baseUrl = 'https://app.flipbase.com/api';
-    const id = "";
-    const token = ;
+    this.setState({isLoading: true})
+    const {data} = this.state
+    const lastVidId = data.length >= 1 ? data[data.length-1].id : ""
+    const q = queryBuilder(showMore, this.state.queries, lastVidId)
 
-    fetch(`${baseUrl}/organizations/${id}/eb/videos${q}`, {
-      mode: "cors",
-      headers: {
-        Authorization: "JWT " + token
-      }
-    })
-    .then(resp => {
-      // Check of er een fout is
-      if (resp.status < 200 || resp.status >= 400) {
-        // foutafhandeling
-        if (resp.status === 401) {
-            this.setState({ error: "Invalid Token, try again later" });
-            return;
-        }
-          // onbekende fout
-          this.setState({ error: `error ${resp.status}` });
-          return;
-      } if (resp.status === 204) {
-          this.setState({ error: `no results` });
-          return;
-      }
-      resp.json()
-        .then(json => {
-          console.log(json.data);
-          showMore ? this.setState({data : [...this.state.data, ...json.data]}) : this.setState({data : json.data})
-        })
+    fetch(`${baseURL}/organizations/${orgId}/eb/videos${q}`, config)
+    .then(handleFetchError)
+    .then(handleJson)
+    .then(json => {
+      showMore
+      ? this.setState({data : [...this.state.data, ...json.data], isLoading: false})
+      : this.setState({data : json.data, isLoading: false})
     })
     .catch(error => {
-        this.setState({ error: `No internet connection` });
-        document.getElementById("modal").innerHTML = `<h1>Some error</h1>`;
+        this.setState({ error: `No internet connection`, isLoading: false });
         return;
-      });
+    });
   }
 
   removeError(){
     this.setState({error: ""})
   }
 
+  getState() {
+    return this.state;
+  }
+
   render() {
     const { emit } = this.props.emitter;
-    const blurredBackground = !this.state.init.blurredBackground ? "none" : null
+    const { queries, data, error, init } = this.state
+    const blurredBackground = !init.blurredBackground ? "none" : null
     return (
-      <Provider emitter={this.props.emitter}>
+      <Provider emitter={this.props.emitter} getState={this.getState.bind(this)}>
         <div id="modal">
-          <div
-            className={`blurredBackground ${blurredBackground}`}
-            onClick={() => emit("close")}
-          />
-          <Modal
-            filters={this.state.queries}                      // Voor showFiltersToRemove
-            videos={this.state.data}                          // Om videos te kunnen tonen
-          />
-          <ErrorHandler
-            error={this.state.error}                          // Toon error
-          />
+          <div className={`blurredBackground ${blurredBackground}`} onClick={() => emit("close")} />
+          <Modal>
+            <Filter />
+            <Content />
+          </Modal>
+          <ErrorHandler/>
         </div>
       </Provider>
     )
   }
 }
 
-// render(<App />, document.body)
 export default App
